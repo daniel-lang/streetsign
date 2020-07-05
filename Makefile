@@ -24,4 +24,4 @@ requirements.txt: requirements_raw.txt
 	./.virtualenv/bin/pip freeze -r requirements_raw.txt >> requirements.txt
 
 migrate:
-	echo 'run_migrations()' | ./.virtualenv/bin/python3 -i db.py
+	echo 'run_migrations()' | ./.virtualenv/bin/python3 -i db.py 

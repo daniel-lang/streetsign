@@ -148,6 +148,12 @@ def post_form_intake(post, form, editor):
     post.active_end = \
         getstr('active_end', post.active_end, validate=DATESTR, form=form)
 
+    fontsize = getint('post_fontsize', 0, minimum=0, form=form)
+    if form['post_fontsize_mode'] == 'custom' and fontsize > 0:
+        post.fontsize = fontsize
+    else:
+        post.fontsize = 0
+
     post.write_date = now()
 
 def delete_post_and_run_callback(post, typemodule):

@@ -124,6 +124,29 @@ def by_id(model, ids):
     ''' returns a list of objects, selected by id (list) '''
     return [x for x in model.select().where(model.id << [int(i) for i in ids])]
 
+
+'''
+--------------------------------------------------------------------------------
+Migrations
+--------------------------------------------------------------------------------
+'''
+
+
+def migrations(dbfile=False):
+    # http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#migrate
+    init(dbfile)
+
+    # Migration 2: add post font size
+    post_fields = DB.get_columns('Post')
+    post_field_names = [x[0] for x in post_fields]  # 0: name of column
+
+    if 'fontsize' not in post_field_names:
+        post_fontsize = IntegerField(null=True)
+        migrate(
+            MIGRATOR.add_column('Post', 'fontsize', post_fontsize)
+        )
+
+
 '''
 --------------------------------------------------------------------------------
 Migrations
@@ -629,6 +652,7 @@ class Post(DBModel):
     title = TextField() #: used to easily identify the post
     type = TextField() #: used to load the content-type module for this post
     content = TextField() #: JSON data sent to the content-type module
+    fontsize = IntegerField(null=True)  #: used to set a fixed font size, null for automatic
     feed = ForeignKeyField(Feed, related_name='posts') #: which feed
 
     author = ForeignKeyField(User, related_name='posts') #: who wrote it?
@@ -696,6 +720,7 @@ class Post(DBModel):
              'title': self.title,
              'type': self.type,
              'content': safe_json_load(self.content, {}),
+             'fontsize': self.fontsize,
              'time_restrictions': safe_json_load(self.time_restrictions, []),
              'time_restrictions_show': self.time_restrictions_show,
              'display_time': self.display_time * 1000, # in milliseconds

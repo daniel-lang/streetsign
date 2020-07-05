@@ -18,6 +18,28 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
+        <h2 class="panel-title">Font Size:</h2>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <input id="font-auto" type="radio" name="post_fontsize_mode" value="auto" {{'checked' if not post.fontsize}}>
+            <label for="font-auto">Automatic (the client will calculate the size based on screen and content size)</label>
+        </div>
+        <div class="col-md-12">
+            <input id="font-custom" type="radio" name="post_fontsize_mode" value="custom" {{'checked' if post.fontsize}}>
+            <label for="font-custom">Custom (the size will be fixed no matter the screen and content size)</label>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <input class="form-control" type="number" name="post_fontsize" value="{{post.fontsize if post.fontsize else ''}}">
+                <span class="input-group-addon">pt</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
         <h2 class="panel-title">Post Lifetime:</h2>
     </div>
     <div class="panel-body">

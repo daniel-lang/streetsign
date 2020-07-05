@@ -8,7 +8,11 @@
 
         console.log('making new text-post');
 
-        reduce_font_size_to_fit(newhtml.children('.post_inner'), $(zone));
+        if (data.fontsize > 0) {
+            newhtml.children('.post_inner').css('font-size', data.fontsize + 'pt');
+        } else {
+            reduce_font_size_to_fit(newhtml.children('.post_inner'), $(zone));
+        }
 
         return newhtml;
     }
