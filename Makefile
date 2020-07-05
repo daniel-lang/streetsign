@@ -7,7 +7,7 @@ clean:
 	rm -rf .v/
 	rm config.py
 
-all: requirements.txt .virtualenv config.py database.db
+all: requirements.txt .virtualenv config.py database.db migrate
 
 .virtualenv: requirements.txt
 	python3 -m venv .virtualenv
