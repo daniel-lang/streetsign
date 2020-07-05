@@ -45,6 +45,7 @@ from datetime import datetime, timedelta
 from time import time, mktime
 import bleach # html stripping.
 from hashlib import md5
+from playhouse.migrate import *
 
 try:
     import re2 as re # pylint: disable=import-error
@@ -58,11 +59,12 @@ from streetsign_server import app
 SECRET_KEY = app.config.get('SECRET_KEY')
 
 DB = SqliteDatabase(None)
+MIGRATOR = SqliteMigrator(DB)
 
 __all__ = ['DB', 'user_login', 'user_logout', 'get_logged_in_user',
            'User', 'Group', 'Post', 'Feed', 'FeedPermission', 'UserGroup',
            'ConfigVar', 'Screen', 'config_var', 'UserSession', 'ExternalSource',
-           'init', 'create_all', 'by_id']
+           'init', 'create_all', 'by_id', 'migrations']
 
 
 '''
@@ -121,6 +123,29 @@ def create_all(dbfile=False):
 def by_id(model, ids):
     ''' returns a list of objects, selected by id (list) '''
     return [x for x in model.select().where(model.id << [int(i) for i in ids])]
+
+
+'''
+--------------------------------------------------------------------------------
+Migrations
+--------------------------------------------------------------------------------
+'''
+
+
+def migrations(dbfile=False):
+    # http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#migrate
+    init(dbfile)
+
+    # Migration 2: add post font size
+    post_fields = DB.get_columns('Post')
+    post_field_names = [x[0] for x in post_fields]  # 0: name of column
+
+    if 'fontsize' not in post_field_names:
+        post_fontsize = IntegerField(null=True)
+        migrate(
+            MIGRATOR.add_column('Post', 'fontsize', post_fontsize)
+        )
+
 
 '''
 --------------------------------------------------------------------------------
@@ -606,6 +631,7 @@ class Post(DBModel):
 
     type = TextField() #: used to load the content-type module for this post
     content = TextField() #: JSON data sent to the content-type module
+    fontsize = IntegerField(null=True)  #: used to set a fixed font size, null for automatic
     feed = ForeignKeyField(Feed, related_name='posts') #: which feed
 
     author = ForeignKeyField(User, related_name='posts') #: who wrote it?
@@ -672,6 +698,7 @@ class Post(DBModel):
             {'id': self.id,
              'type': self.type,
              'content': safe_json_load(self.content, {}),
+             'fontsize': self.fontsize,
              'time_restrictions': safe_json_load(self.time_restrictions, []),
              'time_restrictions_show': self.time_restrictions_show,
              'display_time': self.display_time * 1000, # in milliseconds
