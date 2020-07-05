@@ -65,7 +65,7 @@ def make():
 
 
 def run_migrations():
-    ''' run migrations, configured in modles.py '''
+    ''' run migrations, configured in models.py '''
     migrations()
 
 if __name__ == '__main__':
@@ -73,4 +73,4 @@ if __name__ == '__main__':
     print('type:  make() to make default data')
     print('or init() to connect to the database for interative work.')
     print('dir() will show you the available functions and models')
-    print('run_migrate() will run migrations on the database.')
+    print('run_migrations() will run migrations on the database.')

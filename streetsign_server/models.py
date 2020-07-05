@@ -141,6 +141,7 @@ def migrations(dbfile=False):
 
     # Migration 1: add post title
     if 'title' not in post_field_names:
+        print('running migration 1 - add post title')
         post_title = TextField(default='')
         migrate(
             MIGRATOR.add_column('Post', 'title', post_title)
@@ -148,6 +149,7 @@ def migrations(dbfile=False):
 
     # Migration 2: add post font size
     if 'fontsize' not in post_field_names:
+        print('running migration 2 - add post font size')
         post_fontsize = IntegerField(null=True)
         migrate(
             MIGRATOR.add_column('Post', 'fontsize', post_fontsize)
