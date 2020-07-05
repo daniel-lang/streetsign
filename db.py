@@ -53,6 +53,7 @@ def make():
     news.save()
 
     Post(type='html',
+         title='First Post',
          feed=news,
          author=User(id=1),
          published=True,
