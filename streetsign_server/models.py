@@ -136,36 +136,23 @@ def migrations(dbfile=False):
     # http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#migrate
     init(dbfile)
 
-    # Migration 2: add post font size
     post_fields = DB.get_columns('Post')
     post_field_names = [x[0] for x in post_fields]  # 0: name of column
 
+    # Migration 1: add post title
+    if 'title' not in post_field_names:
+        post_title = TextField(default='')
+        migrate(
+            MIGRATOR.add_column('Post', 'title', post_title)
+        )
+
+    # Migration 2: add post font size
     if 'fontsize' not in post_field_names:
         post_fontsize = IntegerField(null=True)
         migrate(
             MIGRATOR.add_column('Post', 'fontsize', post_fontsize)
         )
 
-
-'''
---------------------------------------------------------------------------------
-Migrations
---------------------------------------------------------------------------------
-'''
-def migrations(dbfile=False):
-    # http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#migrate
-    init(dbfile)
-
-    # Migration 1: add post title
-    post_fields = DB.get_columns('Post')
-    post_field_names = [x[0] for x in post_fields] # 0: name of column
-
-    if 'title' not in post_field_names:
-        post_title = TextField(default='')
-        migrate(
-            MIGRATOR.add_column('Post', 'title', post_title)
-        )
-    
 
 '''
 --------------------------------------------------------------------------------
@@ -649,7 +636,7 @@ class Post(DBModel):
         of post can be added quite easily later, without changing the
         schema. '''
 
-    title = TextField() #: used to easily identify the post
+    title = TextField()  #: used to easily identify the post
     type = TextField() #: used to load the content-type module for this post
     content = TextField() #: JSON data sent to the content-type module
     fontsize = IntegerField(null=True)  #: used to set a fixed font size, null for automatic
